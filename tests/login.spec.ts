@@ -27,7 +27,7 @@ test.describe('User login to Demobank', () => {
     // await page.getByTestId('login-button').click();
 
 
-    
+
     // Assert
     await expect(page.getByTestId('user-name')).toHaveText(expectedUsername);
   });
@@ -38,28 +38,37 @@ test.describe('User login to Demobank', () => {
     const exceptedErrorMessange = 'identyfikator ma min. 8 znaków'
 
     // Act
-    await page.getByTestId('login-input').fill(incorrectUserId);
-    await page.getByTestId('password-input').click();
+    const loginPage = new LoginPage(page);
+
+    await loginPage.loginInput.fill(incorrectUserId);
+    await loginPage.loginButton.click();
+    //await page.getByTestId('login-input').fill(incorrectUserId);
+    // await page.getByTestId('password-input').click();
 
     // Assert
-    await expect(page.getByTestId('error-login-id')).toHaveText(exceptedErrorMessange);
+    await expect(loginPage.loginError).toHaveText(exceptedErrorMessange);
+    //await expect(page.getByTestId('error-login-id')).toHaveText(exceptedErrorMessange);
 
   });
 
   test('unsuccessful login with too short password', async ({ page }) => {
     // Arrange
     const userId = loginData.userId;
-    const exceptedErrorMessange = 'hasło ma min. 8 znaków'
+    const exceptedErrorMessange = 'hasło ma min. 8 znaków';
     const incorrectPassword = '12345';
 
     // Act
-    await page.getByTestId('login-input').fill(userId);
-    await page.getByTestId('password-input').fill(incorrectPassword);
-    await page.getByTestId('password-input').blur();
+    const loginPage = new LoginPage(page);
+    await loginPage.loginInput.fill(userId);
+    await loginPage.passwordInput.fill(incorrectPassword);
+    await loginPage.passwordInput.blur();
+    //await page.getByTestId('login-input').fill(userId);
+    //await page.getByTestId('password-input').fill(incorrectPassword);
+    //await page.getByTestId('password-input').blur();
 
-
-
-    await expect(page.getByTestId('error-login-password')).toHaveText(exceptedErrorMessange);
+    // Assert
+    await expect(loginPage.passwordError).toHaveText(exceptedErrorMessange);
+    //await expect(page.getByTestId('error-login-password')).toHaveText(exceptedErrorMessange);
 
   });
 });
